@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f5f52">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Care Connect">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Herock Care Connect</title>
+<meta name="description" content="Find health professionals near you and request an appointment.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩺</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#find">Herock Care Connect</a>
+  <nav aria-label="Sections">
+    <a href="#find">Find care</a>
+    <a href="#saved">Saved <b id="savedCount">0</b></a>
+    <a href="#visits">Requests <b id="visitCount">0</b></a>
+  </nav>
+</header>
+
+<main>
+<section class="hero" id="find">
+  <h1>Find a clinician who is close, available, and takes your plan.</h1>
+  <form id="search" class="panel" autocomplete="off">
+    <label>ZIP code or city<input id="where" value="75201" placeholder="75201 or Plano"></label>
+    <label>Specialty<select id="spec"><option value="">Any specialty</option></select></label>
+    <label>Name or clinic<input id="q" placeholder="Optional"></label>
+    <label>Insurance<select id="plan"><option value="">Any plan</option></select></label>
+    <label>Sort by<select id="sort"><option value="soon">Soonest available</option><option value="rating">Highest rated</option><option value="name">Name</option></select></label>
+    <label class="check"><input type="checkbox" id="tele"> Video visits only</label>
+    <button class="go" type="submit">Search</button>
+    <button class="live" type="button" id="liveBtn">Search the live NPI registry</button>
+  </form>
+  <p class="notice" id="notice">Showing a sample directory so the app works offline. Not medical advice. In an emergency, call 911.</p>
+</section>
+
+<section aria-live="polite">
+  <h2 id="resultsTitle">Results</h2>
+  <ul id="results" class="rows"></ul>
+</section>
+
+<section id="saved">
+  <h2>Saved clinicians</h2>
+  <ul id="savedList" class="rows"></ul>
+</section>
+
+<section id="visits">
+  <h2>Appointment requests</h2>
+  <ul id="visitList" class="rows"></ul>
+</section>
+</main>
+
+<footer><p>Herock Care Connect is a project of Herock Tech Ideas Hub. Sample data is fictional.</p>
+<p><button id="install" class="ghost" hidden>Install this app</button> <span id="iosHint" hidden>On iPhone or iPad: tap Share, then Add to Home Screen.</span></p></footer>
+
+<dialog id="book">
+  <form method="dialog" id="bookForm">
+    <h3 id="bookTitle">Request an appointment</h3>
+    <label>Your name<input name="name" required></label>
+    <label>Phone or email<input name="contact" required></label>
+    <label>Preferred date and time<input name="when" type="datetime-local" required></label>
+    <label>Reason for visit<textarea name="reason" rows="3" placeholder="Share only what the clinic needs"></textarea></label>
+    <div class="actions"><button class="go" value="ok">Send request</button><button type="button" id="cancel" class="ghost">Cancel</button></div>
+  </form>
+</dialog>
+<div id="toast" role="status"></div>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+:root{--bg:#eef3f0;--ink:#10231f;--muted:#4d625d;--pine:#0f5f52;--pine2:#0b4a40;--coral:#e4513a;--lav:#dcd7f2;--line:#c8d5cf;--surface:#fbfdfc;color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#0d1a17;--ink:#e8f1ee;--muted:#9fb3ad;--pine:#2f9e8a;--pine2:#7fd1c0;--coral:#ff7a63;--lav:#2a2644;--line:#26403a;--surface:#13251f;color-scheme:dark}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.55 "Instrument Sans",system-ui,sans-serif}
+h1,h2,h3,.brand{font-family:"Bricolage Grotesque","Instrument Sans",sans-serif;letter-spacing:-.02em;line-height:1.08}
+.top{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;padding:1rem clamp(1rem,4vw,3rem);border-bottom:1px solid var(--line)}
+.brand{font-weight:800;font-size:1.25rem;color:var(--pine2);text-decoration:none}
+nav{display:flex;gap:1.25rem}nav a{color:var(--ink);text-decoration:none;font-weight:500}
+nav b{background:var(--lav);border-radius:99px;padding:0 .5rem;font-size:.8rem;margin-left:.2rem}
+main,footer{max-width:1040px;margin:0 auto;padding:0 clamp(1rem,4vw,2rem)}
+.hero{padding:clamp(2rem,6vw,4.5rem) 0 1.5rem}
+h1{font-weight:800;font-size:clamp(2.1rem,6vw,4rem);max-width:16ch;margin:0 0 1.75rem}
+h2{font-weight:800;font-size:1.6rem;margin:2.5rem 0 .75rem}
+.panel{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.9rem 1rem;background:var(--pine);color:#fff;padding:1.4rem;border-radius:18px 18px 18px 4px;align-items:end}
+.panel label{display:grid;gap:.3rem;font-size:.9rem;font-weight:500}
+input,select,textarea{font:inherit;padding:.65rem .75rem;border:2px solid transparent;border-radius:8px;background:#fff;color:#10231f;width:100%}
+.panel .check{display:flex;align-items:center;gap:.5rem;padding-bottom:.7rem}.check input{width:auto;accent-color:var(--coral)}
+button{font:inherit;font-weight:600;cursor:pointer;border-radius:8px;padding:.7rem 1.1rem;border:2px solid transparent}
+.go{background:var(--coral);color:#1b0a06}.go:hover{filter:brightness(1.08)}
+.live,.ghost{background:transparent;color:inherit;border-color:currentColor}
+.ghost{color:var(--ink)}
+:focus-visible{outline:3px solid var(--lav);outline-offset:2px}.panel :focus-visible{outline-color:#fff}
+.notice{color:var(--muted);font-size:.9rem;max-width:70ch}
+.rows{list-style:none;margin:0;padding:0}
+.row{display:grid;grid-template-columns:56px 1fr auto;gap:1rem;padding:1.1rem 0;border-top:1px solid var(--line);align-items:start}
+.av{width:56px;height:56px;border-radius:50% 50% 50% 8px;background:var(--lav);display:grid;place-items:center;font:800 1.1rem "Bricolage Grotesque",sans-serif}
+.row h3{margin:0;font-size:1.15rem}.meta{color:var(--muted);font-size:.92rem;margin:.15rem 0}
+.tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.4rem}.tag{font-size:.78rem;border:1px solid var(--line);border-radius:99px;padding:.05rem .6rem;background:var(--surface)}
+.tag.next{border-color:var(--pine);color:var(--pine2);font-weight:600}
+.btns{display:flex;flex-direction:column;gap:.5rem}.btns button{padding:.5rem .9rem}
+.empty{padding:1.2rem 0;color:var(--muted);border-top:1px solid var(--line)}
+dialog{border:0;border-radius:16px;padding:1.5rem;max-width:440px;width:calc(100% - 2rem);background:var(--surface);color:var(--ink)}
+dialog::backdrop{background:rgba(8,20,17,.6)}dialog form{display:grid;gap:.9rem}dialog label{display:grid;gap:.3rem;font-weight:500}
+dialog input,dialog textarea{border-color:var(--line)}.actions{display:flex;gap:.6rem}
+#toast{position:fixed;left:50%;bottom:1.5rem;transform:translate(-50%,150%);background:var(--ink);color:var(--bg);padding:.7rem 1.1rem;border-radius:8px;transition:transform .25s}
+#toast.on{transform:translate(-50%,0)}
+footer{padding:3rem clamp(1rem,4vw,2rem);color:var(--muted);font-size:.9rem}
+@media(max-width:600px){.row{grid-template-columns:48px 1fr}.btns{grid-column:2;flex-direction:row}.av{width:48px;height:48px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* ---------- Mobile ---------- */
+body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);-webkit-text-size-adjust:100%}
+.top{padding-top:calc(1rem + env(safe-area-inset-top))}
+button,a,input,select,textarea{touch-action:manipulation}
+@media(pointer:coarse){button,input,select{min-height:44px}}
+@media(max-width:700px){
+  input,select,textarea{font-size:16px} /* stops iOS from zooming on focus */
+  body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+  .top{justify-content:center}
+  nav{position:fixed;left:0;right:0;bottom:0;z-index:20;justify-content:space-around;gap:0;background:var(--surface);border-top:1px solid var(--line);padding:.35rem .5rem calc(.35rem + env(safe-area-inset-bottom))}
+  nav a{flex:1;text-align:center;padding:.6rem .25rem;min-height:48px;border-radius:10px;font-size:.9rem}
+  nav a:active{background:var(--lav)}
+  .panel{grid-template-columns:1fr 1fr;padding:1rem;gap:.75rem}
+  .panel label:first-child,.panel .go,.panel .live,.panel .check{grid-column:1/-1}
+  .go,.live{width:100%}
+  .row{grid-template-columns:48px 1fr}
+  .btns{grid-column:1/-1;flex-direction:row}.btns button{flex:1;min-height:44px}
+  h2{scroll-margin-top:1rem}
+  dialog{margin:auto auto 0;border-radius:18px 18px 0 0;max-width:100%;width:100%;padding-bottom:calc(1.5rem + env(safe-area-inset-bottom))}
+  #toast{bottom:calc(90px + env(safe-area-inset-bottom));width:max-content;max-width:90%}
+}
+@media(display-mode:standalone){footer #install,footer #iosHint{display:none}}
