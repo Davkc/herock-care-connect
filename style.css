@@ -63,3 +63,9 @@ button,a,input,select,textarea{touch-action:manipulation}
   #toast{bottom:calc(90px + env(safe-area-inset-bottom));width:max-content;max-width:90%}
 }
 @media(display-mode:standalone){footer #install,footer #iosHint{display:none}}
+
+.account-heading,.account-actions{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.account-heading{justify-content:space-between}.account-heading h2{margin:0}
+#accountDialog [hidden]{display:none}
+.account-actions{margin-top:1rem}
+#accountDialog button{min-height:44px}

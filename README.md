@@ -25,6 +25,12 @@ bash scripts/check.sh
 bash scripts/deploy.sh <your-username> herock-care-connect
 ```
 
+## Account setup
+
+Enable Email/Password in [Firebase Authentication](https://firebase.google.com/docs/auth/web/password-auth), register a Web app in the same project, and add `davkc.github.io` to Authentication → Settings → Authorized domains. Add a repository Actions secret named `HCC_FIREBASE_WEB_CONFIG` containing JSON with the Web app's `apiKey`, `authDomain`, `projectId`, and `appId`, then rerun the Pages workflow. The workflow publishes only those public Firebase client settings. Use a Web app configuration for this value and keep administrative credentials separate.
+
+For local testing, put the same JSON in an untracked `firebase-config.json` and serve the app over HTTP. Account actions use Firebase Authentication. Saved clinicians and past visit notes are stored in the browser on that device.
+
 ## Run locally
 Open `index.html`, or run `python3 -m http.server 8000` and visit http://localhost:8000.
 

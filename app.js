@@ -84,11 +84,12 @@ async function search(){
   }
   $("#resultsTitle").textContent = "Searching the directory…";
   $("#searchStatus").textContent = "";
-  const terms = [$("#q").value.trim(), $("#spec").value.trim()].filter(Boolean).join(" ");
+  const terms = $("#q").value.trim();
+  const codes = $("#spec").value.split(" ").filter(Boolean);
+  const specialty = codes.length ? " AND licenses.taxonomy.code:(" + codes.join(" OR ") + ")" : "";
   try {
     const result = await lookup({
-      q: location, terms, count: pageSize,
-      sf: "NPI,name.full,provider_type,licenses.taxonomy.classification,licenses.taxonomy.specialization"
+      q: location + specialty, terms, count: pageSize, sf: "NPI,name.full"
     }, request.signal);
     if (request.signal.aborted) return;
     ({providers: shown, total} = result);

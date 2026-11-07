@@ -19,6 +19,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      - name: Configure Firebase Authentication
+        env:
+          HCC_FIREBASE_WEB_CONFIG: ${{ secrets.HCC_FIREBASE_WEB_CONFIG }}
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const raw = process.env.HCC_FIREBASE_WEB_CONFIG;
+          const fields = ['apiKey', 'authDomain', 'projectId', 'appId'];
+          const config = raw ? JSON.parse(raw) : {};
+          if (raw && fields.some(field => typeof config?.[field] !== 'string' || !config[field].trim())) {
+            throw new Error('Incomplete Firebase Web app configuration.');
+          }
+          fs.writeFileSync('firebase-config.json', JSON.stringify(
+            Object.fromEntries(fields.filter(field => field in config).map(field => [field, config[field]]))
+          ));
+          NODE
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .

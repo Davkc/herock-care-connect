@@ -23,6 +23,7 @@
   <nav aria-label="Sections">
     <a href="#find">Find care</a>
     <a href="#saved">Saved <b id="savedCount">0</b></a>
+    <a id="accountLink" href="#accountDialog">Account</a>
     <a id="visitLink" href="#visits" hidden>Past notes <b id="visitCount">0</b></a>
   </nav>
 </header>
@@ -32,7 +33,20 @@
   <h1>Find clinicians near you.</h1>
   <form id="search" class="panel" autocomplete="off">
     <label>ZIP code or city<input id="where" value="75201" placeholder="75201 or Dallas, TX" maxlength="100" required></label>
-    <label>Specialty<input id="spec" placeholder="e.g. Dermatology" maxlength="80"></label>
+    <label>Specialty<select id="spec">
+      <option value="">Any specialty</option>
+      <option value="207Q00000X 207R00000X 208D00000X">Primary care</option>
+      <option value="207RC0000X 207RI0011X 207RC0001X 207RC0200X">Cardiology</option>
+      <option value="122300000X 1223G0001X 1223P0221X 1223P0300X">Dentistry</option>
+      <option value="207N00000X 207NP0225X 207ND0900X">Dermatology</option>
+      <option value="152W00000X 207W00000X">Eye care</option>
+      <option value="103T00000X 103TC0700X 1041C0700X 101YM0800X 2084P0800X 2084P0804X">Mental health</option>
+      <option value="2084N0400X 2084N0402X">Neurology</option>
+      <option value="207V00000X 207VX0000X 207VX0201X">Obstetrics &amp; gynecology</option>
+      <option value="207X00000X 207XS0114X 207XS0106X">Orthopedic surgery</option>
+      <option value="208000000X 2080A0000X">Pediatrics</option>
+      <option value="225100000X 2251X0800X 2251P0200X">Physical therapy</option>
+    </select></label>
     <label>Clinician name or NPI<input id="q" placeholder="Optional" maxlength="100"></label>
     <button class="go" type="submit">Search</button>
   </form>
@@ -60,6 +74,28 @@
 <footer><p>Herock Care Connect is a project of Herock Tech Ideas Hub.</p>
 <p><button id="install" class="ghost" hidden>Install this app</button> <span id="iosHint" hidden>On iPhone or iPad: tap Share, then Add to Home Screen.</span></p></footer>
 
+<dialog id="accountDialog" aria-labelledby="accountTitle">
+  <div class="account-heading">
+    <h2 id="accountTitle">Log in</h2>
+    <form method="dialog"><button class="ghost" aria-label="Close account dialog">Close</button></form>
+  </div>
+  <p id="accountStatus" class="notice" role="status"></p>
+  <form id="accountForm" hidden>
+    <label>Email <input id="accountEmail" type="email" autocomplete="email" required></label>
+    <label id="passwordField">Password <input id="accountPassword" type="password" autocomplete="current-password" required></label>
+    <button id="accountSubmit" class="go" type="submit">Log in</button>
+  </form>
+  <div id="accountLinks" class="account-actions" hidden>
+    <button id="accountSwitch" type="button" class="ghost">Create account</button>
+    <button id="accountReset" type="button" class="ghost">Forgot password?</button>
+  </div>
+  <div id="accountSession" class="account-actions" hidden>
+    <button id="verifyCheck" type="button" class="ghost">Check verification</button>
+    <button id="verifySend" type="button" class="ghost">Resend verification email</button>
+    <button id="accountLogout" type="button" class="ghost">Log out</button>
+  </div>
+</dialog>
 <script src="app.js"></script>
+<script type="module" src="account.mjs"></script>
 </body>
 </html>
