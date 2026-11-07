@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Care Connect">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Herock Care Connect</title>
-<meta name="description" content="Find health professionals near you and request an appointment.">
+<meta name="description" content="Find clinicians by ZIP code or city using public provider directory records.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩺</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&family=Instrument+Sans:wght@400;500;600&display=swap">
@@ -23,56 +23,43 @@
   <nav aria-label="Sections">
     <a href="#find">Find care</a>
     <a href="#saved">Saved <b id="savedCount">0</b></a>
-    <a href="#visits">Requests <b id="visitCount">0</b></a>
+    <a id="visitLink" href="#visits" hidden>Past notes <b id="visitCount">0</b></a>
   </nav>
 </header>
 
 <main>
 <section class="hero" id="find">
-  <h1>Find a clinician who is close, available, and takes your plan.</h1>
+  <h1>Find clinicians near you.</h1>
   <form id="search" class="panel" autocomplete="off">
-    <label>ZIP code or city<input id="where" value="75201" placeholder="75201 or Plano"></label>
-    <label>Specialty<select id="spec"><option value="">Any specialty</option></select></label>
-    <label>Name or clinic<input id="q" placeholder="Optional"></label>
-    <label>Insurance<select id="plan"><option value="">Any plan</option></select></label>
-    <label>Sort by<select id="sort"><option value="soon">Soonest available</option><option value="rating">Highest rated</option><option value="name">Name</option></select></label>
-    <label class="check"><input type="checkbox" id="tele"> Video visits only</label>
+    <label>ZIP code or city<input id="where" value="75201" placeholder="75201 or Dallas, TX" maxlength="100" required></label>
+    <label>Specialty<input id="spec" placeholder="e.g. Dermatology" maxlength="80"></label>
+    <label>Clinician name or NPI<input id="q" placeholder="Optional" maxlength="100"></label>
     <button class="go" type="submit">Search</button>
-    <button class="live" type="button" id="liveBtn">Search the live NPI registry</button>
   </form>
-  <p class="notice" id="notice">Showing a sample directory so the app works offline. Not medical advice. In an emergency, call 911.</p>
+  <p class="notice">Provider listings come from <a href="https://clinicaltables.nlm.nih.gov/apidoc/npi_idv/v3/doc.html">the National Library of Medicine’s NPI directory</a>. Confirm availability, insurance, and video visits with the practice. For emergencies, call 911.</p>
 </section>
 
 <section aria-live="polite">
   <h2 id="resultsTitle">Results</h2>
+  <p id="searchStatus" class="notice"></p>
   <ul id="results" class="rows"></ul>
 </section>
 
 <section id="saved">
-  <h2>Saved clinicians</h2>
+  <h2 id="savedTitle" tabindex="-1">Saved clinicians</h2>
   <ul id="savedList" class="rows"></ul>
 </section>
 
-<section id="visits">
-  <h2>Appointment requests</h2>
+<section id="visits" hidden>
+  <h2>Past visit notes</h2>
+  <p class="notice">These notes were saved on this device. Contact the practice directly to book.</p>
   <ul id="visitList" class="rows"></ul>
 </section>
 </main>
 
-<footer><p>Herock Care Connect is a project of Herock Tech Ideas Hub. Sample data is fictional.</p>
+<footer><p>Herock Care Connect is a project of Herock Tech Ideas Hub.</p>
 <p><button id="install" class="ghost" hidden>Install this app</button> <span id="iosHint" hidden>On iPhone or iPad: tap Share, then Add to Home Screen.</span></p></footer>
 
-<dialog id="book">
-  <form method="dialog" id="bookForm">
-    <h3 id="bookTitle">Request an appointment</h3>
-    <label>Your name<input name="name" required></label>
-    <label>Phone or email<input name="contact" required></label>
-    <label>Preferred date and time<input name="when" type="datetime-local" required></label>
-    <label>Reason for visit<textarea name="reason" rows="3" placeholder="Share only what the clinic needs"></textarea></label>
-    <div class="actions"><button class="go" value="ok">Send request</button><button type="button" id="cancel" class="ghost">Cancel</button></div>
-  </form>
-</dialog>
-<div id="toast" role="status"></div>
 <script src="app.js"></script>
 </body>
 </html>

@@ -1,16 +1,24 @@
-// Offline support: cache the app shell, serve it first, refresh in the background.
-const CACHE = "hcc-v2";
+// Keep the app shell available offline. Directory queries go straight to the network.
+const CACHE = "hcc-v3";
 const SHELL = ["./", "index.html", "style.css", "app.js", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
-self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting() });
-self.addEventListener("activate", e => {
-  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))));
-  self.clients.claim();
+const shellURLs = new Set(SHELL.map(path => new URL(path, self.registration.scope).href));
+
+self.addEventListener("install", event => {
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL.map(path => new Request(path, {cache: "reload"})))).then(() => self.skipWaiting()));
 });
-self.addEventListener("fetch", e => {
-  const u = new URL(e.request.url);
-  if (e.request.method !== "GET" || u.origin !== location.origin) return; // fonts and NPI API go straight to network
-  e.respondWith(caches.match(e.request).then(hit => {
-    const net = fetch(e.request).then(r => { caches.open(CACHE).then(c => c.put(e.request, r.clone())); return r }).catch(() => hit);
-    return hit || net;
+self.addEventListener("activate", event => {
+  event.waitUntil(caches.keys().then(keys => Promise.all(
+    keys.filter(key => key.startsWith("hcc-") && key !== CACHE).map(key => caches.delete(key))
+  )).then(() => self.clients.claim()));
+});
+self.addEventListener("fetch", event => {
+  const {request} = event;
+  if (request.method !== "GET") return;
+  const url = new URL(request.url);
+  url.search = "";
+  if (!shellURLs.has(url.href)) return;
+  event.respondWith(fetch(request, {cache: "no-cache"}).catch(async () => {
+    const cache = await caches.open(CACHE);
+    return (await cache.match(url.href)) || Response.error();
   }));
 });

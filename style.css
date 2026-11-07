@@ -22,6 +22,8 @@ button{font:inherit;font-weight:600;cursor:pointer;border-radius:8px;padding:.7r
 .ghost{color:var(--ink)}
 :focus-visible{outline:3px solid var(--lav);outline-offset:2px}.panel :focus-visible{outline-color:#fff}
 .notice{color:var(--muted);font-size:.9rem;max-width:70ch}
+.notice a,.meta a{color:var(--pine2)}
+.btns button{min-height:44px}
 .rows{list-style:none;margin:0;padding:0}
 .row{display:grid;grid-template-columns:56px 1fr auto;gap:1rem;padding:1.1rem 0;border-top:1px solid var(--line);align-items:start}
 .av{width:56px;height:56px;border-radius:50% 50% 50% 8px;background:var(--lav);display:grid;place-items:center;font:800 1.1rem "Bricolage Grotesque",sans-serif}

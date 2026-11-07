@@ -1,19 +1,16 @@
 # Herock Care Connect
 
-Find health professionals near you, compare availability and insurance, save favorites, and send appointment requests. Built with plain HTML, CSS, and JavaScript, so there is no build step and it deploys anywhere static files can be hosted.
+Find clinicians near you and save a shortlist. Built with plain HTML, CSS, and JavaScript, with no build step.
 
-**Live demo:** `https://<your-username>.github.io/herock-care-connect/`
+**Live site:** https://davkc.github.io/herock-care-connect/
 
-## Features in this version
-- Search by ZIP code or city, specialty, name or clinic, and insurance plan
-- Video-visit filter and sorting by soonest availability, rating, or name
-- Optional live lookup of real clinicians through the public NPI Registry API
-- Save clinicians to a shortlist (stored in your browser)
-- Appointment request form with an "Add to calendar" (.ics) download
-- Mobile-first layout: bottom tab bar, large touch targets, bottom-sheet booking form, and notch/safe-area support
-- Installable app (PWA) for iPhone and Android, with offline access to the app shell
-- Responsive layout, keyboard-friendly, light and dark mode, reduced-motion support
-- Privacy first: nothing leaves the browser, and no accounts are required
+## Provider directory
+
+- Search by U.S. ZIP code or city, with optional specialty and clinician name or NPI.
+- Searches query the [National Library of Medicine's NPI directory](https://clinicaltables.nlm.nih.gov/apidoc/npi_idv/v3/doc.html) for its latest published CMS records. Results show the registry specialty, practice address, and listed phone when available.
+- Contact the practice to confirm hours, availability, insurance, and video visits. The site links to the practice's listed number.
+- Saved clinician IDs stay in your browser and their listings are checked again when you open the app.
+- The installable app shell works offline. Directory searches require an internet connection.
 
 ## Use on your phone
 - **Android (Chrome):** open the live site and tap **Install this app**, or the browser menu then **Install app**.
@@ -58,7 +55,7 @@ Then open **Settings → Pages**, set **Source** to **GitHub Actions**. The incl
 | Engineering | Tests (Playwright), CI lint, Lighthouse checks | Portfolio-grade quality signals |
 
 ## Important notice
-The bundled directory is fictional sample data. This app does not give medical advice. In an emergency, call 911.
+Provider listings can change. Confirm details with the practice. In an emergency, call 911.
 
 ## Credits
 A Herock Tech Ideas Hub project.
