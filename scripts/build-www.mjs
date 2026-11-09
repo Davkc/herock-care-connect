@@ -4,7 +4,7 @@ const root = new URL("../", import.meta.url);
 const config = JSON.parse(readFileSync(new URL("capacitor.config.json", root), "utf8"));
 const output = new URL(config.webDir + "/", root);
 const assets = [
-  "index.html", "style.css", "app.js", "account.mjs", "sw.js",
+  "index.html", "style.css", "pagination.js", "app.js", "account.mjs", "sw.js",
   "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"
 ];
 

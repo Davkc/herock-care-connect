@@ -1,6 +1,6 @@
 // Keep the app shell available offline. Directory queries go straight to the network.
-const CACHE = "hcc-v6";
-const SHELL = ["./", "index.html", "style.css", "app.js", "account.mjs", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
+const CACHE = "hcc-v7";
+const SHELL = ["./", "index.html", "style.css", "pagination.js", "app.js", "account.mjs", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 const shellURLs = new Set(SHELL.map(path => new URL(path, self.registration.scope).href));
 
 self.addEventListener("install", event => {

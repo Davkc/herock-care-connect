@@ -66,10 +66,11 @@
   <ul id="sharedList" class="rows"></ul>
 </section>
 
-<section aria-live="polite">
-  <h2 id="resultsTitle">Results</h2>
+<section aria-labelledby="resultsTitle">
+  <h2 id="resultsTitle" tabindex="-1" aria-live="polite">Results</h2>
   <p id="searchStatus" class="notice"></p>
   <ul id="results" class="rows"></ul>
+  <div id="pager" class="pager" hidden></div>
 </section>
 
 <section id="saved">
@@ -136,6 +137,7 @@
   </div>
   <div id="detailBody"></div>
 </dialog>
+<script src="pagination.js"></script>
 <script src="app.js"></script>
 <script type="module" src="account.mjs"></script>
 </body>

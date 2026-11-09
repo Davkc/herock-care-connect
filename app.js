@@ -10,6 +10,7 @@ const store = {
 };
 const directory = "https://clinicaltables.nlm.nih.gov/api/npi_idv/v3/search";
 const pageSize = 30;
+const directoryLimit = 7500;
 const isProviderId = id => typeof id === "string" && /^npi\d{10}$/.test(id);
 const saved = new Set(store.get("hcc.saved", []).filter(isProviderId));
 const savedProviders = new Map();
@@ -19,7 +20,6 @@ const shareLimit = 100;
 let sharedIds = [];
 let sharedStatus = "";
 let visits = store.get("hcc.visits", []);
-let searchRequest;
 let savedStatus = "";
 let noteProvider;
 
@@ -43,7 +43,7 @@ function providerRow(p){
   </div></li>`;
 }
 
-async function lookup(params, signal){
+async function lookup(params, signal, displayLimit = Infinity){
   const query = new URLSearchParams({
     terms: "",
     df: "name.full,NPI,provider_type,addr_practice.full,addr_practice.phone",
@@ -58,12 +58,12 @@ async function lookup(params, signal){
   if (!response.ok) throw new Error("Directory request failed");
   const [total, , , rows] = await response.json();
   if (!Number.isInteger(total) || !Array.isArray(rows)) throw new Error("Invalid directory response");
-  const providers = rows
+  const providers = rows.slice(0, displayLimit)
     .filter(([name, npi]) => typeof name === "string" && name.trim() && /^\d{10}$/.test(npi))
     .map(([name, npi, specialty, address, phone]) => ({
       id: "npi" + npi, npi, name, specialty, address, phone: phone || ""
     }));
-  return {total, providers};
+  return {rowCount: rows.length, providers};
 }
 
 function locationFilter(value){
@@ -74,57 +74,88 @@ function locationFilter(value){
   return 'addr_practice.city:"' + city.trim() + '"' + (state ? " AND addr_practice.state:" + state.toUpperCase() : "");
 }
 
-function renderResults(providers, total){
-  const ordered = $("#sort").value === "name"
-    ? [...providers].sort((a, b) => a.name.localeCompare(b.name))
-    : providers;
-  $("#resultsTitle").textContent = total > providers.length
-    ? "Showing " + providers.length + " results"
-    : providers.length + (providers.length === 1 ? " clinician found" : " clinicians found");
-  $("#results").innerHTML = providers.length
-    ? ordered.map(providerRow).join("")
-    : '<li class="empty">No directory matches. Try another ZIP code or city, or remove a filter.</li>';
+function renderResults(added){
+  const count = shown.size;
+  $("#resultsTitle").textContent = count + (count === 1 ? " clinician shown" : " clinicians shown");
+  if (!count) {
+    $("#results").innerHTML = '<li class="empty">No directory matches. Try another ZIP code or city, or remove a filter.</li>';
+  } else if ($("#sort").value === "name") {
+    const ordered = [...shown.values()].sort((a, b) => a.name.localeCompare(b.name));
+    $("#results").innerHTML = ordered.map(providerRow).join("");
+  } else if (added) {
+    $("#results").insertAdjacentHTML("beforeend", added.map(providerRow).join(""));
+  } else {
+    $("#results").innerHTML = [...shown.values()].map(providerRow).join("");
+  }
 }
 
-let shown = [];
-let total = 0;
-let hasResults = false;
+const shown = new Map();
+let searchParams;
+const pager = Pager({
+  mount: $("#pager"),
+  pageSize,
+  maxResults: directoryLimit,
+  infinite: store.get("hcc.infinite", true) !== false,
+  async fetchPage(page, signal){
+    const offset = (page - 1) * pageSize;
+    // Read one extra record when possible to detect the next page without relying on an estimated total.
+    const count = Math.min(pageSize + 1, directoryLimit - offset);
+    const {providers, rowCount} = await lookup({...searchParams, offset, count}, signal, pageSize);
+    return {items: providers, hasMore: count === pageSize ? rowCount === pageSize : rowCount > pageSize};
+  },
+  renderItems(providers, append){
+    const appendToRows = append && shown.size > 0;
+    if (!append) shown.clear();
+    const added = [];
+    for (const provider of providers) {
+      if (shown.has(provider.id)) continue;
+      shown.set(provider.id, provider);
+      added.push(provider);
+    }
+    renderResults(appendToRows ? added : null);
+    const checked = new Date().toLocaleTimeString([], {hour: "numeric", minute: "2-digit"});
+    $("#searchStatus").textContent = "Directory checked at " + checked + ".";
+    return shown.size;
+  },
+  onPageChange(){
+    const title = $("#resultsTitle");
+    title.focus({preventScroll: true});
+    title.scrollIntoView({block: "start"});
+  },
+  onMode(infinite){
+    store.set("hcc.infinite", infinite);
+    startResults();
+  },
+  onError(){
+    $("#resultsTitle").textContent = "Directory unavailable";
+    $("#searchStatus").textContent = "Check your connection and try again.";
+  }
+});
 
-async function search(){
-  searchRequest?.abort();
-  const request = new AbortController();
-  searchRequest = request;
-  const location = locationFilter($("#where").value.trim());
-  shown = [];
-  hasResults = false;
+function startResults(){
+  shown.clear();
   $("#results").replaceChildren();
+  $("#resultsTitle").textContent = "Searching the directory…";
+  $("#searchStatus").textContent = "";
+  pager.start();
+}
+
+function search(){
+  const location = locationFilter($("#where").value.trim());
   if (!location) {
+    pager.hide();
+    shown.clear();
+    $("#results").replaceChildren();
     $("#resultsTitle").textContent = "Enter a location";
     $("#searchStatus").textContent = "Use a 5-digit ZIP code, a city, or a city and state such as Dallas, TX.";
     return;
   }
-  $("#resultsTitle").textContent = "Searching the directory…";
-  $("#searchStatus").textContent = "";
   const terms = $("#q").value.trim();
   const codes = $("#spec").value.split(" ").filter(Boolean);
   const specialty = codes.length ? " AND licenses.taxonomy.code:(" + codes.join(" OR ") + ")" : "";
   store.set("hcc.where", $("#where").value.trim());
-  try {
-    const result = await lookup({
-      q: location + specialty, terms, count: pageSize, sf: "NPI,name.full"
-    }, request.signal);
-    if (request.signal.aborted) return;
-    ({providers: shown, total} = result);
-    hasResults = true;
-    renderResults(shown, total);
-    const checked = new Date().toLocaleTimeString([], {hour: "numeric", minute: "2-digit"});
-    $("#searchStatus").textContent = "Directory checked at " + checked + "."
-      + (total > shown.length ? " Refine your search to narrow the results." : "");
-  } catch {
-    if (request.signal.aborted) return;
-    $("#resultsTitle").textContent = "Directory unavailable";
-    $("#searchStatus").textContent = "The directory could not be reached. Check your connection and try Search again.";
-  }
+  searchParams = {q: location + specialty, terms, sf: "NPI,name.full"};
+  startResults();
 }
 
 function renderSaved(){
@@ -320,7 +351,7 @@ document.addEventListener("click", event => {
   if (!button) return;
   const {save, del, calendar, compare, note, prep} = button.dataset;
   const id = save || compare || note;
-  const provider = id && (shown.find(p => p.id === id) || savedProviders.get(id) || sharedProviders.get(id));
+  const provider = id && (shown.get(id) || savedProviders.get(id) || sharedProviders.get(id));
   if (compare && provider) {
     if (comparison.has(compare)) comparison.delete(compare);
     else if (comparison.size < 3) comparison.set(compare, provider);
@@ -354,7 +385,7 @@ document.addEventListener("click", event => {
     const list = button.closest("ul");
     renderSaved();
     renderShared();
-    if (shown.length) renderResults(shown, total);
+    if (shown.size) renderResults();
     const replacement = [...list.querySelectorAll("[data-save]")].find(b => b.dataset.save === save);
     (replacement || $("#savedTitle")).focus();
   }
@@ -390,7 +421,7 @@ theme.onchange = () => {
 };
 
 spec.onchange = updateQuickFilters;
-$("#sort").onchange = () => { if (hasResults) renderResults(shown, total) };
+$("#sort").onchange = () => { if (shown.size) renderResults() };
 $("#where").value = store.get("hcc.where", store.get("hcc.prefs", {})?.where || $("#where").value) || $("#where").value;
 $("#search").addEventListener("submit", event => { event.preventDefault(); search() });
 $("#search").addEventListener("reset", () => queueMicrotask(() => {

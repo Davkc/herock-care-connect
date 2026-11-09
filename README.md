@@ -7,6 +7,7 @@ Find clinicians near you and save a shortlist. The website uses plain HTML, CSS,
 ## Provider directory
 
 - Search by U.S. ZIP code or city, with optional specialty and clinician name or NPI.
+- Browse 30 clinicians at a time with numbered pages or turn on continuous scrolling. The app remembers your choice.
 - Searches query the [National Library of Medicine's NPI directory](https://clinicaltables.nlm.nih.gov/apidoc/npi_idv/v3/doc.html) for its latest published CMS records. Results show the registry specialty, practice address, and listed phone when available.
 - Contact the practice to confirm hours, availability, insurance, and video visits. The site links to the practice's listed number.
 - Use quick specialty filters, sort displayed results by name, and open directions to a listed practice. Compare up to three clinicians using their directory details.

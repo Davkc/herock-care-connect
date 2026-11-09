@@ -89,6 +89,16 @@ button:disabled{opacity:.65;cursor:default}
 .comparison-table{overflow-x:auto;margin-top:1rem}
 .comparison-table table{width:100%;border-collapse:collapse}
 .comparison-table th,.comparison-table td{padding:.6rem;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+.pager{margin:1rem 0 2rem;display:grid;gap:.65rem;justify-items:start}
+.pager[hidden],.pager [hidden],.pgstatus:empty{display:none}
+.pgstatus,.pgnote{margin:0;color:var(--muted)}
+.pgrow{display:flex;flex-wrap:wrap;gap:.4rem}
+.pg{min-height:44px;min-width:44px;background:var(--surface);color:var(--ink);border:1px solid var(--line);padding:.45rem .85rem}
+.pg:hover:not(:disabled){border-color:var(--pine2)}
+.pg[aria-current="page"]{background:var(--pine);border-color:var(--pine);color:#fff}
+.pgmode{display:flex;align-items:center;gap:.5rem;min-height:44px;color:var(--muted)}
+.pgmode input{width:1.25rem;height:1.25rem;min-height:0;accent-color:var(--pine)}
+.sentinel{height:1px;width:100%}
 @media(max-width:700px){
   .btns{flex-wrap:wrap}
   #compareBar{bottom:calc(56px + env(safe-area-inset-bottom))}
