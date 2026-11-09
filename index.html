@@ -3,13 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f5f52">
+<meta name="theme-color" content="#1d4ed8">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Care Connect">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script>try{const theme=localStorage.getItem("hcc.theme");if(theme==="light"||theme==="dark")document.documentElement.dataset.theme=theme}catch{}</script>
 <title>Herock Care Connect</title>
 <meta name="description" content="Find clinicians by ZIP code or city using public provider directory records.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩺</text></svg>">
@@ -20,11 +21,14 @@
 <body>
 <header class="top">
   <a class="brand" href="#find">Herock Care Connect</a>
+  <label class="theme">Theme
+    <select id="theme"><option value="auto">Auto</option><option value="light">Light</option><option value="dark">Dark</option></select>
+  </label>
   <nav aria-label="Sections">
     <a href="#find">Find care</a>
     <a href="#saved">Saved <b id="savedCount">0</b></a>
     <a id="accountLink" href="#accountDialog">Account</a>
-    <a id="visitLink" href="#visits" hidden>Past notes <b id="visitCount">0</b></a>
+    <a id="visitLink" href="#visits" hidden>Visit notes <b id="visitCount">0</b></a>
   </nav>
 </header>
 
@@ -35,22 +39,31 @@
     <label>ZIP code or city<input id="where" value="75201" placeholder="75201 or Dallas, TX" maxlength="100" required></label>
     <label>Specialty<select id="spec">
       <option value="">Any specialty</option>
-      <option value="207Q00000X 207R00000X 208D00000X">Primary care</option>
+      <option data-quick value="207Q00000X 207R00000X 208D00000X">Primary care</option>
       <option value="207RC0000X 207RI0011X 207RC0001X 207RC0200X">Cardiology</option>
-      <option value="122300000X 1223G0001X 1223P0221X 1223P0300X">Dentistry</option>
-      <option value="207N00000X 207NP0225X 207ND0900X">Dermatology</option>
+      <option data-quick value="122300000X 1223G0001X 1223P0221X 1223P0300X">Dentistry</option>
+      <option data-quick value="207N00000X 207NP0225X 207ND0900X">Dermatology</option>
       <option value="152W00000X 207W00000X">Eye care</option>
-      <option value="103T00000X 103TC0700X 1041C0700X 101YM0800X 2084P0800X 2084P0804X">Mental health</option>
+      <option data-quick value="103T00000X 103TC0700X 1041C0700X 101YM0800X 2084P0800X 2084P0804X">Mental health</option>
       <option value="2084N0400X 2084N0402X">Neurology</option>
       <option value="207V00000X 207VX0000X 207VX0201X">Obstetrics &amp; gynecology</option>
       <option value="207X00000X 207XS0114X 207XS0106X">Orthopedic surgery</option>
-      <option value="208000000X 2080A0000X">Pediatrics</option>
+      <option data-quick value="208000000X 2080A0000X">Pediatrics</option>
       <option value="225100000X 2251X0800X 2251P0200X">Physical therapy</option>
     </select></label>
     <label>Clinician name or NPI<input id="q" placeholder="Optional" maxlength="100"></label>
+    <label>Sort results<select id="sort"><option value="directory">Directory order</option><option value="name">Name (A–Z)</option></select></label>
     <button class="go" type="submit">Search</button>
+    <button class="live" type="reset">Reset filters</button>
   </form>
+  <div id="quick" class="control-row" role="group" aria-label="Quick specialty filters"></div>
   <p class="notice">Provider listings come from <a href="https://clinicaltables.nlm.nih.gov/apidoc/npi_idv/v3/doc.html">the National Library of Medicine’s NPI directory</a>. Confirm availability, insurance, and video visits with the practice. For emergencies, call 911.</p>
+</section>
+
+<section id="shared" hidden>
+  <h2>Shared shortlist</h2>
+  <p id="sharedStatus" class="notice" role="status"></p>
+  <ul id="sharedList" class="rows"></ul>
 </section>
 
 <section aria-live="polite">
@@ -61,15 +74,23 @@
 
 <section id="saved">
   <h2 id="savedTitle" tabindex="-1">Saved clinicians</h2>
+  <button class="ghost" id="share" type="button" disabled>Copy share link</button>
+  <p id="shareStatus" class="notice" role="status"></p>
   <ul id="savedList" class="rows"></ul>
 </section>
 
 <section id="visits" hidden>
-  <h2>Past visit notes</h2>
+  <h2>Visit notes</h2>
   <p class="notice">These notes were saved on this device. Contact the practice directly to book.</p>
   <ul id="visitList" class="rows"></ul>
 </section>
 </main>
+
+<aside id="compareBar" class="control-row" hidden aria-label="Clinician comparison">
+  <span id="compareCount" role="status"></span>
+  <button class="go" id="compareOpen" type="button" disabled>Compare</button>
+  <button class="ghost" id="compareClear" type="button">Clear</button>
+</aside>
 
 <footer><p>Herock Care Connect is a project of Herock Tech Ideas Hub.</p>
 <p><button id="install" class="ghost" hidden>Install this app</button> <span id="iosHint" hidden>On iPhone or iPad: tap Share, then Add to Home Screen.</span></p></footer>
@@ -94,6 +115,26 @@
     <button id="verifySend" type="button" class="ghost">Resend verification email</button>
     <button id="accountLogout" type="button" class="ghost">Log out</button>
   </div>
+</dialog>
+<dialog id="noteDialog" aria-labelledby="noteTitle">
+  <form id="noteForm">
+    <h3 id="noteTitle"></h3>
+    <p class="notice">This note stays on this device. Contact the practice directly to book.</p>
+    <label>Planned date and time<input name="when" type="datetime-local" required></label>
+    <label>Optional note<textarea name="reason" rows="3" maxlength="2000"></textarea></label>
+    <p id="noteStatus" class="notice" role="status"></p>
+    <div class="control-row">
+      <button class="go" type="submit">Save visit note</button>
+      <button class="ghost" id="noteCancel" type="button">Cancel</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="detailDialog" aria-labelledby="detailTitle">
+  <div class="account-heading">
+    <h2 id="detailTitle"></h2>
+    <form method="dialog"><button class="ghost">Close</button></form>
+  </div>
+  <div id="detailBody"></div>
 </dialog>
 <script src="app.js"></script>
 <script type="module" src="account.mjs"></script>

@@ -8,11 +8,13 @@ A static, installable (PWA) website that helps people find health professionals 
 ## Files
 - `index.html`: page structure and dialog markup
 - `style.css`: all styling, including the mobile layout (bottom of the file)
-- `app.js`: directory search, saved clinicians, past local notes, PWA install
+- `app.js`: directory search, clinician comparisons and shortlists, local visit notes, PWA install
+- `account.mjs`: Firebase Authentication flows
 - `sw.js`: service worker (offline cache). Bump `CACHE` in this file whenever a cached file changes
 - `manifest.webmanifest`, `*.png`: PWA manifest and icons
 - `.github/workflows/pages.yml`: deploys the repo root to GitHub Pages on push to `main`
 - `scripts/check.sh`: validation. `scripts/deploy.sh`: one-command GitHub deploy
+- `capacitor.config.json`, `package.json`, `scripts/build-www.mjs`: optional Capacitor packaging. Keep the web asset list in sync with the app shell.
 
 ## Commands
 - Validate: `bash scripts/check.sh` (must pass before every commit)

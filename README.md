@@ -1,6 +1,6 @@
 # Herock Care Connect
 
-Find clinicians near you and save a shortlist. Built with plain HTML, CSS, and JavaScript, with no build step.
+Find clinicians near you and save a shortlist. The website uses plain HTML, CSS, and JavaScript and needs no build step.
 
 **Live site:** https://davkc.github.io/herock-care-connect/
 
@@ -9,7 +9,11 @@ Find clinicians near you and save a shortlist. Built with plain HTML, CSS, and J
 - Search by U.S. ZIP code or city, with optional specialty and clinician name or NPI.
 - Searches query the [National Library of Medicine's NPI directory](https://clinicaltables.nlm.nih.gov/apidoc/npi_idv/v3/doc.html) for its latest published CMS records. Results show the registry specialty, practice address, and listed phone when available.
 - Contact the practice to confirm hours, availability, insurance, and video visits. The site links to the practice's listed number.
+- Use quick specialty filters, sort displayed results by name, and open directions to a listed practice. Compare up to three clinicians using their directory details.
 - Saved clinician IDs stay in your browser and their listings are checked again when you open the app.
+- Share your saved shortlist using a link containing the public clinician NPIs. A recipient can view the list and choose which clinicians to save.
+- Keep visit notes on this device and download a tentative calendar event or a visit prep checklist. Contact the practice directly to book.
+- Choose Light, Dark, or Auto. The app remembers your theme and the last ZIP code or city searched on this device.
 - The installable app shell works offline. Directory searches require an internet connection.
 
 ## Use on your phone
@@ -29,10 +33,29 @@ bash scripts/deploy.sh <your-username> herock-care-connect
 
 Enable Email/Password in [Firebase Authentication](https://firebase.google.com/docs/auth/web/password-auth), register a Web app in the same project, and add `davkc.github.io` to Authentication → Settings → Authorized domains. Add a repository Actions secret named `HCC_FIREBASE_WEB_CONFIG` containing JSON with the Web app's `apiKey`, `authDomain`, `projectId`, and `appId`, then rerun the Pages workflow. The workflow publishes only those public Firebase client settings. Use a Web app configuration for this value and keep administrative credentials separate.
 
-For local testing, put the same JSON in an untracked `firebase-config.json` and serve the app over HTTP. Account actions use Firebase Authentication. Saved clinicians and past visit notes are stored in the browser on that device.
+For local testing, put the same JSON in an untracked `firebase-config.json` and serve the app over HTTP. Account actions use Firebase Authentication. Saved clinicians and visit notes are stored in the browser on that device.
+
+## Package for Android and iOS
+
+The web app can also be bundled with Capacitor. Set up the [Capacitor 7 development environment](https://capacitorjs.com/docs/v7/getting-started/environment-setup) for your platform.
+
+```bash
+npm install
+npm run cap:add:android   # first setup on Android
+npm run cap:add:ios       # first setup on macOS with Xcode
+npm run sync             # rebuild web assets and sync existing native projects
+npm run open:android
+npm run open:ios
+```
+
+`npm run build:www` copies the web app into the generated `www/` directory. When `firebase-config.json` is present, the bundle includes its four public Web app settings.
+
+## Deploy on Render
+
+Use a Render Static Site with branch `main`, build command `node scripts/build-www.mjs`, and publish directory `www`. Set `HCC_FIREBASE_WEB_CONFIG` in Render to the same public Firebase Web app JSON used by GitHub Pages. Add the Render hostname in Firebase Authentication → Settings → Authorized domains.
 
 ## Run locally
-Open `index.html`, or run `python3 -m http.server 8000` and visit http://localhost:8000.
+Run `python3 -m http.server 8000` and visit http://localhost:8000.
 
 ## Deploy to GitHub Pages
 ```bash

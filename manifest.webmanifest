@@ -1,13 +1,13 @@
 {
   "name": "Herock Care Connect",
   "short_name": "Care Connect",
-  "description": "Find health professionals near you and request an appointment.",
+  "description": "Find clinicians near you and contact their practices.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#eef3f0",
-  "theme_color": "#0f5f52",
+  "background_color": "#eef4fb",
+  "theme_color": "#1d4ed8",
   "icons": [
     {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
     {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
