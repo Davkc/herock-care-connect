@@ -52,7 +52,14 @@
       <option value="225100000X 2251X0800X 2251P0200X">Physical therapy</option>
     </select></label>
     <label>Clinician name or NPI<input id="q" placeholder="Optional" maxlength="100"></label>
+    <label>Practice state<input id="state" placeholder="e.g. TX" maxlength="2" pattern="[A-Za-z]{2}" title="Enter a two-letter state abbreviation"></label>
+    <label>Clinician gender (as listed)<select id="gender">
+      <option value="">Any</option>
+      <option value="F">Female</option>
+      <option value="M">Male</option>
+    </select></label>
     <label>Sort results<select id="sort"><option value="directory">Directory order</option><option value="name">Name (A–Z)</option></select></label>
+    <label class="check"><input type="checkbox" id="listedPhone"> Has a listed practice phone</label>
     <button class="go" type="submit">Search</button>
     <button class="live" type="reset">Reset filters</button>
   </form>

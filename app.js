@@ -66,12 +66,15 @@ async function lookup(params, signal, displayLimit = Infinity){
   return {rowCount: rows.length, providers};
 }
 
-function locationFilter(value){
-  if (/^\d{5}$/.test(value)) return "addr_practice.zip:" + value + "*";
+function locationFilter(value, selectedState){
+  const stateFilter = state => state ? " AND addr_practice.state:" + state : "";
+  if (/^\d{5}$/.test(value)) return "addr_practice.zip:" + value + "*" + stateFilter(selectedState);
   const match = /^([\p{L}][\p{L} .’'-]*?)(?:,\s*([a-z]{2}))?$/iu.exec(value);
   if (!match) return "";
   const [, city, state] = match;
-  return 'addr_practice.city:"' + city.trim() + '"' + (state ? " AND addr_practice.state:" + state.toUpperCase() : "");
+  const cityState = state?.toUpperCase();
+  if (cityState && selectedState && cityState !== selectedState) return "";
+  return 'addr_practice.city:"' + city.trim() + '"' + stateFilter(selectedState || cityState);
 }
 
 function renderResults(added){
@@ -141,20 +144,25 @@ function startResults(){
 }
 
 function search(){
-  const location = locationFilter($("#where").value.trim());
+  const state = $("#state").value.trim().toUpperCase();
+  const location = locationFilter($("#where").value.trim(), /^[A-Z]{2}$/.test(state) ? state : "");
   if (!location) {
     pager.hide();
     shown.clear();
     $("#results").replaceChildren();
     $("#resultsTitle").textContent = "Enter a location";
-    $("#searchStatus").textContent = "Use a 5-digit ZIP code, a city, or a city and state such as Dallas, TX.";
+    $("#searchStatus").textContent = "Enter a 5-digit ZIP code or a city. If you enter a state in both fields, use the same abbreviation.";
     return;
   }
   const terms = $("#q").value.trim();
   const codes = $("#spec").value.split(" ").filter(Boolean);
-  const specialty = codes.length ? " AND licenses.taxonomy.code:(" + codes.join(" OR ") + ")" : "";
+  const filters = [location];
+  if (codes.length) filters.push("licenses.taxonomy.code:(" + codes.join(" OR ") + ")");
+  const gender = $("#gender").value;
+  if (gender === "F" || gender === "M") filters.push("gender:" + gender);
+  if ($("#listedPhone").checked) filters.push("addr_practice.phone:*");
   store.set("hcc.where", $("#where").value.trim());
-  searchParams = {q: location + specialty, terms, sf: "NPI,name.full"};
+  searchParams = {q: filters.join(" AND "), terms, sf: "NPI,name.full"};
   startResults();
 }
 
