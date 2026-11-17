@@ -420,13 +420,21 @@ function updateQuickFilters(){
   for (const button of quick.children) button.setAttribute("aria-pressed", button.value === spec.value);
 }
 
-const theme = $("#theme");
-theme.value = document.documentElement.dataset.theme || "auto";
-theme.onchange = () => {
-  if (theme.value === "auto") delete document.documentElement.dataset.theme;
-  else document.documentElement.dataset.theme = theme.value;
-  try { localStorage.setItem("hcc.theme", theme.value) } catch {}
-};
+const themeToggle = $("button#theme");
+if (themeToggle) {
+  const root = document.documentElement;
+  const preference = matchMedia("(prefers-color-scheme: dark)");
+  const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : preference.matches;
+  const updateToggle = () => themeToggle.setAttribute("aria-pressed", isDark());
+  themeToggle.onclick = () => {
+    root.dataset.theme = isDark() ? "light" : "dark";
+    try { localStorage.setItem("hcc.theme", root.dataset.theme) } catch {}
+    updateToggle();
+  };
+  preference.addEventListener("change", updateToggle);
+  updateToggle();
+  themeToggle.hidden = false;
+}
 
 spec.onchange = updateQuickFilters;
 $("#sort").onchange = () => { if (shown.size) renderResults() };

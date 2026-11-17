@@ -71,8 +71,8 @@ button,a,input,select,textarea{touch-action:manipulation}
 .account-actions{margin-top:1rem}
 #accountDialog button{min-height:44px}
 
-.theme,.control-row{display:flex;align-items:center;gap:.5rem}
-.theme select{width:auto;min-height:44px;border-color:var(--line)}
+.control-row{display:flex;align-items:center;gap:.5rem}
+button#theme{min-height:44px}
 .control-row{flex-wrap:wrap}
 .control-row button,#share{min-height:44px}
 #quick{margin-top:.75rem}
