@@ -14,7 +14,7 @@ Find clinicians near you and save a shortlist. The website uses plain HTML, CSS,
 - Saved clinician IDs stay in your browser and their listings are checked again when you open the app.
 - Share your saved shortlist using a link containing the public clinician NPIs. A recipient can view the list and choose which clinicians to save.
 - Keep visit notes on this device and download a tentative calendar event or a visit prep checklist. Contact the practice directly to book.
-- Use the Dark mode button to switch between light and dark. The app starts with your device theme and remembers your choice and last searched location.
+- Use the Light mode or Dark mode button to switch themes. The app starts with your device theme and remembers your choice and last searched location.
 - The installable app shell works offline. Directory searches require an internet connection.
 
 ## Use on your phone

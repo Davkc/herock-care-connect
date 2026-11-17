@@ -72,7 +72,7 @@ button,a,input,select,textarea{touch-action:manipulation}
 #accountDialog button{min-height:44px}
 
 .control-row{display:flex;align-items:center;gap:.5rem}
-button#theme{width:44px;height:44px;padding:0;font-size:1.4rem;line-height:1}
+button#theme{min-height:44px;min-width:8rem}
 .control-row{flex-wrap:wrap}
 .control-row button,#share{min-height:44px}
 #quick{margin-top:.75rem}
