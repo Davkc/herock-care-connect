@@ -425,7 +425,12 @@ if (themeToggle) {
   const root = document.documentElement;
   const preference = matchMedia("(prefers-color-scheme: dark)");
   const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : preference.matches;
-  const updateToggle = () => themeToggle.setAttribute("aria-pressed", isDark());
+  const updateToggle = () => {
+    const dark = isDark();
+    themeToggle.setAttribute("aria-pressed", dark);
+    const icon = themeToggle.querySelector("span");
+    if (icon) icon.textContent = dark ? "☀" : "☾";
+  };
   themeToggle.onclick = () => {
     root.dataset.theme = isDark() ? "light" : "dark";
     try { localStorage.setItem("hcc.theme", root.dataset.theme) } catch {}
